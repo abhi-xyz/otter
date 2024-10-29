@@ -17,6 +17,8 @@
       #   };
       #   default = self.homeManagerModules.otter;
       # };
+      homeManagerModules.otter = import ./module.nix;
+      homeManagerModule.default = self.homeManagerModules.otter;
       #
       packages = forAllSystems (system: {
         default = pkgsFor.${system}.callPackage ./default.nix { };
