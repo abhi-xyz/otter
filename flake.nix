@@ -12,11 +12,12 @@
       #
       # Nixos module, consumed by other flakes
       # nixosModules."otter" = { config, ... }: { options = {}; config = {}; };
-      nixosModules."otter" = import ./module.nix;
-      nixosModules.default = import ./module.nix;
+      #      nixosModules."otter" = import ./module.nix;
+      # nixosModules.default = import ./module.nix;
       # Default module
       # nixosModules.default = { config, ... }: { options = {}; config = {}; };
       #
+      homeManagerModules.default = self.homeManagerModules.otter;
       homeManagerModules.otter = import ./module.nix;
       homeManagerModule.default = self.homeManagerModules.otter;
       #
