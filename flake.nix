@@ -3,14 +3,16 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       pkgsFor = nixpkgs.legacyPackages;
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-    in {
+    in
+    {
       #
       # Nixos module, consumed by other flakes
       # nixosModules."otter" = { config, ... }: { options = {}; config = {}; };
@@ -20,22 +22,58 @@
       # nixosModules.default = { config, ... }: { options = {}; config = {}; };
       #
       # homeManagerModules.otter = import ./module.nix;
-      homeManagerModules.otter = { config, pkgs, lib, ... }: {
-        options.program.otter = {
-          enable = lib.mkEnableOption "Enable the Otter program";
+      homeManagerModules.otter =
+        {
+          config,
+          pkgs,
+          lib,
+          ...
+        }:
+        let
+          tomlFormat = pkgs.formats.toml { };
+        in
+        {
+          options.program.otter = {
+            enable = lib.mkEnableOption "Enable the Otter program";
 
-          package = lib.mkOption {
-            type = lib.types.package;
-            default = pkgs.callPackage ./default.nix { };
-            description = "The otter package to use.";
+            package = lib.mkOption {
+              type = lib.types.package;
+              default = pkgs.callPackage ./default.nix { };
+              description = "The otter package to use.";
+            };
+
+            settings = lib.mkOption {
+              type = tomlFormat.type;
+              default = { };
+              example = lib.literalExpression ''
+                                [directories]
+                images = { path = "/home/abhi/pics/pictures/images", tree = false }
+                documents = { path = "/home/abhi/docs/lib", tree = false }
+                videos = { path = "/home/abhi/videos", tree = true }
+                archives = { path = "/home/abhi/archive", tree = false }
+
+                [input_dirs]
+                dirs = [
+                  "/home/abhi/videos",
+                  "/home/abhi/downloads"
+                ]
+              '';
+              description = ''
+                Configuration written to {file}`$XDG_CONFIG_HOME/oculante/config.json`.
+              '';
+            };
+
+          };
+
+          config = lib.mkIf config.program.otter.enable {
+            home.packages = [ config.program.otter.package ];
+
+            xdg.configFile."otter/config.toml" = lib.mkIf (config.program.otter.settings != { }) {
+              source = tomlFormat.generate "config.toml" config.program.otter.settings;
+            };
           };
         };
 
-        config = lib.mkIf config.program.otter.enable {
-          home.packages = [ config.program.otter.package ];
-        };
-      };
-      
       homeManagerModules.default = self.homeManagerModules.otter;
       homeManagerModule.default = self.homeManagerModules.otter;
       #
@@ -48,20 +86,18 @@
     };
 }
 /*
+  # otter/module.nix
+  { self, config, pkgs, lib, ... }:
 
+  {
+    options.program.otter = {
+      enable = lib.mkEnableOption "Enable the otter program.";
+      # Define any other options here if needed
+    };
 
-# otter/module.nix
-{ self, config, pkgs, lib, ... }:
-
-{
-  options.program.otter = {
-    enable = lib.mkEnableOption "Enable the otter program.";
-    # Define any other options here if needed
-  };
-
-  config = lib.mkIf config.program.otter.enable {
-    # Define what to do when `program.otter.enable` is true
-    home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
-  };
-}
-  */
+    config = lib.mkIf config.program.otter.enable {
+      # Define what to do when `program.otter.enable` is true
+      home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+    };
+  }
+*/
