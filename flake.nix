@@ -3,7 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, lib, ... }:
     let
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -17,6 +17,18 @@
       #   };
       #   default = self.homeManagerModules.otter;
       # };
+      # Nixos module, consumed by other flakes
+      nixosModules."otter" = { config, ... }: { options = {
+        custum.otter = {
+          enable = lib.mkEnableOption "otter program";
+          packages = forAllSystems (system: {
+            default = pkgsFor.${system}.callPackage ./default.nix { };
+          });
+        };
+      }; config = {}; };
+      # Default module
+      nixosModules.default = { config, ... }: { options = {}; config = {}; };
+
       homeManagerModules.otter = import ./module.nix;
       homeManagerModule.default = self.homeManagerModules.otter;
       #
