@@ -8,6 +8,8 @@
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       pkgsFor = nixpkgs.legacyPackages;
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
     in {
       #
       # Nixos module, consumed by other flakes
@@ -24,9 +26,7 @@
 
           package = lib.mkOption {
             type = lib.types.package;
-            default = forAllSystems (system: {
-        default = pkgsFor.${system}.callPackage ./default.nix { };
-      });
+            default = pkgs.callPackage ./default.nix { };
             description = "The otter package to use.";
           };
         };
