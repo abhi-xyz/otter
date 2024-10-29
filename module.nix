@@ -5,11 +5,11 @@ pkgs,
 ...
 }:
 let
-  cfg = config.otter;
+  cfg = config.program.otter;
   defaultPkg = self.packages.${pkgs.hostPlatform.system}.default;
 in
   {
-  options.otter = {
+  options.program.otter = {
     enable = lib.mkEnableOption "the otter program";
 
     package = lib.mkOption {
