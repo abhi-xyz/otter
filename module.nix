@@ -18,7 +18,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = ./flake.nix;
+      default = self.packages.default;
       defaultText = lib.literalExpression "pkgs.otter";
       description = "otter package to use.";
     };
