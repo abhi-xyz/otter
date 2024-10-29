@@ -11,6 +11,9 @@ config,
 let
   cfg = config.programs.otter;
   tomlFmt = pkgs.formats.toml { };
+  supportedSystems = [ "x86_64-linux" ];
+  forAllSystems = pkgs.lib.genAttrs supportedSystems;
+  pkgsFor = pkgs.legacyPackages;
 in
   {
   options.programs.otter = {
@@ -18,7 +21,9 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = self.packages.default;
+      default = forAllSystems (system: {
+        default = pkgsFor.${system}.callPackage ./default.nix { };
+      });
       defaultText = lib.literalExpression "pkgs.otter";
       description = "otter package to use.";
     };
