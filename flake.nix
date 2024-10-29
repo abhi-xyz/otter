@@ -17,8 +17,24 @@
       # Default module
       # nixosModules.default = { config, ... }: { options = {}; config = {}; };
       #
+      # homeManagerModules.otter = import ./module.nix;
+      homeManagerModules.otter = { config, pkgs, lib, ... }: {
+        options.program.otter = {
+          enable = lib.mkEnableOption "Enable the Otter program";
+
+          package = lib.mkOption {
+            type = lib.types.package;
+            default = pkgsFor.callPackage ./default.nix { };
+            description = "The otter package to use.";
+          };
+        };
+
+        config = lib.mkIf config.program.otter.enable {
+          home.packages = [ config.program.otter.package ];
+        };
+      };
+      
       homeManagerModules.default = self.homeManagerModules.otter;
-      homeManagerModules.otter = import ./module.nix;
       homeManagerModule.default = self.homeManagerModules.otter;
       #
       packages = forAllSystems (system: {
@@ -29,4 +45,21 @@
       });
     };
 }
+/*
 
+
+# otter/module.nix
+{ self, config, pkgs, lib, ... }:
+
+{
+  options.program.otter = {
+    enable = lib.mkEnableOption "Enable the otter program.";
+    # Define any other options here if needed
+  };
+
+  config = lib.mkIf config.program.otter.enable {
+    # Define what to do when `program.otter.enable` is true
+    home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+  };
+}
+  */
