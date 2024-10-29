@@ -1,16 +1,13 @@
 #![allow(unused_imports)]
-use std::fs::{
-    self, DirBuilder, rename
-    };
+use std::fs::{self, rename, DirBuilder};
 
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::*;
-use clap::{Parser, Args, Subcommand, ValueEnum};
 use otter::parse_toml;
 
 /// Doc comment
 #[derive(Parser)]
 struct Cli {
-
     #[command(subcommand)]
     command: Command,
 }
@@ -28,7 +25,7 @@ fn main() {
 
     match cli.command {
         Command::Run => {
-            parse_toml();
+            parse_toml().unwrap();
         }
         Command::Verbose => {}
     }

@@ -1,21 +1,25 @@
-use std::{env::current_dir, error::Error, fs::{self, create_dir_all}, path::{Path, PathBuf}};
-
-use dirs::{config_dir, download_dir, home_dir};
+use dirs::{config_dir, download_dir};
 use log::trace;
 use serde::Deserialize;
+use std::{
+    env::current_dir,
+    error::Error,
+    fs::{self, create_dir_all},
+    path::{Path, PathBuf},
+};
 
-/// Configuration structure to deserialize from TOML.
+// Configuration structure to deserialize from TOML.
 #[derive(Deserialize, Debug)]
 pub struct Config {
-   pub directories: Directories,
+    pub directories: Directories,
 }
 
 /// Define directories for each file type in the configuration.
 #[derive(Deserialize, Debug)]
 pub struct Directories {
-   pub images: String,
-   pub documents: String,
-   pub videos: String,
+    pub images: String,
+    pub documents: String,
+    pub videos: String,
 }
 
 fn get_config_file() -> PathBuf {
@@ -27,13 +31,13 @@ fn get_config_file() -> PathBuf {
     if !xdg_path.is_file() {
         let content = toml::toml! {
             [directories]
-            images = "./target/path/to/images"
-            documents = "./target/path/to/documents"
-            videos = "./target/path/to/videos"
+            images = "/home/abhi/pics/"
+            documents = "/home/abhi/docs/"
+            videos = "/home/abhi/videos/"
         };
         let c = content.to_string();
         // fs::write(config_dir().unwrap().join("otter/config.toml"),"heelo").unwrap();
-        fs::write(config_dir().unwrap().join("otter/config.toml"),c).unwrap();
+        fs::write(config_dir().unwrap().join("otter/config.toml"), c).unwrap();
         trace!("writing default config to {:?}", xdg_path);
     }
     let dev_path = current_dir().unwrap().join("config.toml");
@@ -81,15 +85,15 @@ fn move_file(file: &Path, destination_dir: &str) -> Result<(), Box<dyn Error>> {
     let destination_path = Path::new(destination_dir);
     create_dir_all(destination_path)?;
 
-    let file_name = file.file_name().ok_or("Wooh Wooh. What a file name is that!")?;
+    let file_name = file
+        .file_name()
+        .ok_or("Wooh Wooh. What a file name is that!")?;
     let dest_path = destination_path.join(file_name);
 
     fs::rename(file, dest_path)?;
     println!("Moved file: {:?}", file);
     Ok(())
 }
-
-
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
