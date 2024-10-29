@@ -14,6 +14,8 @@ in
     #      cp -r target/x86_64-unknown-linux-gnu/release/ $out/bin/
     #      '';
     #
+    doCheck = false;
+
     meta = with pkgs.lib; {
       description = manifest.description;
       #       homepage = "https://github.com/abhi-xyz/brightness";

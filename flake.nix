@@ -18,10 +18,12 @@
       #   default = self.homeManagerModules.otter;
       # };
       # Nixos module, consumed by other flakes
-      nixosModules."otter" = { config, ... }: { options = {}; config = {}; };
+      # nixosModules."otter" = { config, ... }: { options = {}; config = {}; };
+      nixosModules."otter" = import ./module.nix;
+      nixosModules.default = import ./module.nix;
       # Default module
-      nixosModules.default = { config, ... }: { options = {}; config = {}; };
-
+      # nixosModules.default = { config, ... }: { options = {}; config = {}; };
+      #
       homeManagerModules.otter = import ./module.nix;
       homeManagerModule.default = self.homeManagerModules.otter;
       #
