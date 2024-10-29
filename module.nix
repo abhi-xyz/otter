@@ -10,7 +10,7 @@
 
   config = lib.mkIf config.program.otter.enable {
     # Define what to do when `program.otter.enable` is true
-    home.packages = [ pkgs.otter ];
+    home.packages = [ config.program.otter.package ];
   };
 }
 
