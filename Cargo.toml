@@ -2,6 +2,7 @@
 name = "otter"
 version = "0.1.0"
 edition = "2021"
+description = "otter is a file organizer"
 
 [dependencies]
 dirs = "5.0.1"
