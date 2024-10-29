@@ -1,6 +1,6 @@
-inputs:
+
 # otter/module.nix
-{ config, pkgs, lib, ... }:
+{ self, config, pkgs, lib, ... }:
 
 {
   options.program.otter = {
@@ -10,7 +10,7 @@ inputs:
 
   config = lib.mkIf config.program.otter.enable {
     # Define what to do when `program.otter.enable` is true
-    home.packages = [ inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+    home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
   };
 }
 
