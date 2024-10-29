@@ -10,13 +10,6 @@
       pkgsFor = nixpkgs.legacyPackages;
     in {
       #
-      # homeManagerModules = {
-      #   otter = import "${self}/module.nix" {
-      #     inherit self;
-      #     isNixOSModule = false;
-      #   };
-      #   default = self.homeManagerModules.otter;
-      # };
       # Nixos module, consumed by other flakes
       # nixosModules."otter" = { config, ... }: { options = {}; config = {}; };
       nixosModules."otter" = import ./module.nix;
