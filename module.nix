@@ -1,24 +1,16 @@
-self: {
-lib,
-config,
-pkgs,
-...
-}:
-let
-  cfg = config.program.otter;
-  defaultPkg = self.packages.${pkgs.hostPlatform.system}.default;
-in
-  {
-  options.program.otter = {
-    enable = lib.mkEnableOption "the otter program";
 
-    package = lib.mkOption {
-      type = lib.types.package;
-      default = defaultPkg;
-      description = "otter package to use.";
-    };
+# otter/module.nix
+{ config, pkgs, lib, ... }:
+
+{
+  options.program.otter = {
+    enable = lib.mkEnableOption "Enable the otter program.";
+    # Define any other options here if needed
   };
-  config = lib.mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+
+  config = lib.mkIf config.program.otter.enable {
+    # Define what to do when `program.otter.enable` is true
+    home.packages = [ pkgs.otter ];
   };
 }
+
