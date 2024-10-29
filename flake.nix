@@ -24,7 +24,9 @@
 
           package = lib.mkOption {
             type = lib.types.package;
-            default = pkgsFor.callPackage ./default.nix { };
+            default = forAllSystems (system: {
+        default = pkgsFor.${system}.callPackage ./default.nix { };
+      });
             description = "The otter package to use.";
           };
         };
